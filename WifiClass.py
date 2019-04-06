@@ -1,14 +1,18 @@
 from sys import *
 import urllib2,signal
+from scapy.layers.dot11 import *
 class Wifi:
-    def __init__(self,SSID,BSSID,RSSI,Channel):
-        self._SSID = SSID
-        self._BSSID = BSSID.upper()
-        self._RSSI = RSSI
-        self._CHANNEL = Channel
-        self._Vendor = self.resolveMac(BSSID)
-        self._Clients=[]
+    '''
+    take packets and parse it into Wifi object,
+    '''
 
+    def __init__(self,pkt):
+        self._RSSI= -(256-ord(pkt.notdecoded[-4:-3]))
+        self._SSID= pkt.getlayer(Dot11Elt).info
+        self._BSSID= pkt.addr2.upper()
+        self._Channel = int(ord(pkt[Dot11Elt:3].info))
+        self._Vendor = self.resolveMac(self._BSSID)
+        self._Clients = []
     ##setters##
     def setSSID(self,s):
         self._SSID = s
@@ -32,7 +36,7 @@ class Wifi:
     def getVendor(self):
         return self._Vendor
     def getChannel(self):
-        return self._CHANNEL
+        return self._Channel
     def setChannel(self,c):
         self._CHANNEL = c
 

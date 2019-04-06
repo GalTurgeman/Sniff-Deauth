@@ -1,7 +1,8 @@
+import urllib2,signal
 class Client:
     def __init__(self,ApSSID,BSSID):
-        self._ApSSID = ApSSID
-        self._BSSID = BSSID
+        self._ApSSID = ApSSID.upper()
+        self._BSSID = BSSID.upper()
         self._Vendor = self.resolveMac(BSSID)
 
     ##setters##
@@ -15,6 +16,8 @@ class Client:
         return self._SSID
     def getBSSID(self):
         return self._BSSID
+    def getApSSID(self):
+        return self._ApSSID
     def getVendor(self):
         return self._Vendor
     def __str__(self):
